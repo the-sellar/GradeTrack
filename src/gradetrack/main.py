@@ -1,13 +1,37 @@
-from database.database import DB_FILE, create_database, print_tables
+import sqlite3
+
+from auth import login
+from database.database import create_database
+from menu import admin_menu, teacher_menu, student_menu
+from services.auth_service import ADMIN, TEACHER, STUDENT
 
 
 def main():
-    print("Hello, World! GradeTrack - система учёта оценок студентов.")
-
     create_database()
-    print(f"База данных создана: {DB_FILE}")
-    print_tables()
+    while True:
+        print("\n===== GradeTrack =====\n1. Вход\n0. Выход")
+        choice = input("Выберите действие: ")
+        if choice == "0":
+            print("До свидания!")
+            break
+        if choice != "1":
+            print("Неверный выбор")
+            continue
+        user = login()
+        if not user:
+            continue
+        if user.role_id == ADMIN:
+            admin_menu(user)
+        elif user.role_id == TEACHER:
+            teacher_menu(user)
+        elif user.role_id == STUDENT:
+            student_menu(user)
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except (EOFError, KeyboardInterrupt):
+        print("\nРабота завершена")
+    except sqlite3.Error as error:
+        print(f"Ошибка базы данных: {error}")

@@ -1,4 +1,5 @@
 import sqlite3
+from contextlib import closing
 from pathlib import Path
 
 DATABASE_DIR = Path(__file__).parent
@@ -12,24 +13,9 @@ def get_connection():
 
 
 def create_database():
-    conn = get_connection()
-    conn.executescript((DATABASE_DIR / "schema.sql").read_text(encoding="utf-8"))
-    conn.close()
-
-
-def print_tables():
-    conn = get_connection()
-    tables = conn.execute(
-        "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY rowid"
-    ).fetchall()
-
-    for (name,) in tables:
-        cursor = conn.execute(f"SELECT * FROM {name}")
-        rows = cursor.fetchall()
-
-        print(f"\n{name} - записей: {len(rows)}")
-        print(" | ".join(column[0] for column in cursor.description))
-        for row in rows:
-            print(" | ".join(str(value)[:30] for value in row))
-
-    conn.close()
+    with closing(get_connection()) as conn:
+        exists = conn.execute(
+            "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'users'"
+        ).fetchone()
+        if not exists:
+            conn.executescript((DATABASE_DIR / "schema.sql").read_text(encoding="utf-8"))

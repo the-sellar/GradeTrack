@@ -51,8 +51,8 @@ INSERT INTO groups (group_id, name) VALUES
 
 INSERT INTO subjects (subject_id, name) VALUES
     (1, 'Информатика'),
-    (2, 'Математический анализ'),
-    (3, 'Программирование на Python');
+    (2, 'Математика'),
+    (3, 'Программирование');
 
 INSERT INTO users (user_id, full_name, login, password_hash, role_id, group_id) VALUES
     (1, 'Администратор', 'admin', '1a0a027f9afcf59bcc9e9b52c35eb759$f21a994c09dbda3f74d8d1493862d3d5b75890a5acd61db445587830e78d7b04', 1, NULL),
